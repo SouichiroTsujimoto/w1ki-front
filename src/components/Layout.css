@@ -1,0 +1,8 @@
+
+.main-content {
+    padding-top: 1rem;
+    width: calc(100% - 250px);
+    margin-top: 45px; /* ヘッダーの高さ分の余白 */
+    margin-left: 250px;
+    flex: 1;
+}

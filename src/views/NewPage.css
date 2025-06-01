@@ -1,0 +1,96 @@
+#root {
+    margin: 0 auto;
+}
+
+.page-view-container {
+    /*padding: 1rem;*/
+}
+
+#editPage {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    align-items: stretch !important;
+    text-align: center;
+}
+
+.editor-container {
+    display: flex !important;
+    flex-direction: row !important;
+    width: 100% !important;
+    gap: 1rem !important;
+    height: 70vh !important;
+    min-height: 400px !important;
+    flex-wrap: nowrap !important;
+}
+
+#id {
+    top: 1rem;
+}
+
+.title-input {
+    width: 70%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid #dee2e6;
+    font-size: 1rem;
+}
+
+.action-buttons {
+    margin: 0.5rem 1rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+
+.action-button {
+    padding: 0.5rem 1rem;
+    background-color: white;
+    color: #007bff;
+    border: none;
+    cursor: pointer;
+}
+
+.action-button:hover {
+    background-color: #0069d9;
+    color: white;
+}
+
+.article {
+    width: 100%;
+    text-align: left;
+    padding: 1rem;
+    overflow-y: auto;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    height: 80vh !important;
+}
+
+.preview {
+    text-align: left;
+    padding: 1rem;
+    overflow-y: auto;
+    background-color: #fff;
+    flex: 1 !important;
+    border: 1px solid #ccc;
+    height: 100vh !important;
+    width: 45vw !important;
+    box-sizing: border-box;
+}
+
+.editor {
+    padding: 1rem;
+    font-family: monospace;
+    resize: none;
+    overflow-y: auto;
+    flex: 1 !important;
+    border: 1px solid #ccc;
+    height: 100vh !important;
+    width: 45% !important;
+    text-align: left;
+    box-sizing: border-box;
+}
+

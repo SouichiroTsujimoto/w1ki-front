@@ -1,0 +1,33 @@
+#root {
+  width: 100%;
+  height: 100vh;
+}
+
+.app-container {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.content-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-left: 250px; /* サイドバーの幅 */
+  width: calc(100% - 250px);
+  height: 100vh;
+  overflow-y: auto;
+}
+
+/* #editPageスタイルはPageView.cssで定義 */
+
+.article {
+  border: 1px solid #ccc;
+  width: 100%;
+  max-width: 1000px;
+  min-height: 60vh;
+  text-align: left;
+  margin: 0 auto;
+}
