@@ -18,18 +18,18 @@ function PageView()  {
         setTitle(urlParams.title || "");
         handleLoad(urlParams.title || "");
 
-        const websocket = new WebSocket("ws://localhost:8080/ws");
-        socketRef.current = websocket;
-
-        const onMessage = (event: MessageEvent<string>) => {
-            setMarkdown(event.data)
-        }
-        websocket.addEventListener('message', onMessage);
-
-        return () => {
-            websocket.close()
-            websocket.removeEventListener('message', onMessage);
-        }
+        // const websocket = new WebSocket("ws://localhost:8080/ws");
+        // socketRef.current = websocket;
+        //
+        // const onMessage = (event: MessageEvent<string>) => {
+        //     setMarkdown(event.data)
+        // }
+        // websocket.addEventListener('message', onMessage);
+        //
+        // return () => {
+        //     websocket.close()
+        //     websocket.removeEventListener('message', onMessage);
+        // }
     }, [urlParams.title])
 
     const createNewArticle = (title: string, markdown: string) => {

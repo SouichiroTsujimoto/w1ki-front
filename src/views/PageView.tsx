@@ -11,46 +11,73 @@ function PageView()  {
     const urlParams = useParams<{ title: string }>()
     const [markdown, setMarkdown] = useState<string>("");
     const [editorMode, setEditorMode] = useState<boolean>(false);
-    // const [textValue, setTextValue] = useState<string>('');
     const socketRef = useRef<WebSocket | null>(null);
 
     React.useEffect(() => {
-        handleLoad(urlParams.title || "");
-    }, [urlParams.title])
-
-    React.useEffect(() => {
-        const websocket = new WebSocket("ws://localhost:8080/ws");
+        const websocket = new WebSocket(`ws://localhost:8080/ws/${urlParams.title}`);
         socketRef.current = websocket;
-
         const onMessage = (event: MessageEvent<string>) => {
-            setMarkdown(event.data)
+            const messageType = event.data.split(":")[0];
+            const messageContent = event.data.split(":")[1];
+            handleEditorCommunication(messageType, messageContent)
         }
-        websocket.addEventListener('message', onMessage);
-
+        websocket.addEventListener("message", onMessage);
         return () => {
             websocket.close()
             websocket.removeEventListener('message', onMessage);
         }
-    }, [markdown])
+    }, [editorMode])
+
+    React.useEffect(() => {
+        handleLoad(urlParams.title || "");
+        setEditorMode(false);
+    }, [urlParams.title])
+
+    function sendMarkdwonToOthers(newMarkdown?: string) {
+        setMarkdown((markdown) => {
+            const value = newMarkdown ? newMarkdown : markdown
+            socketRef.current?.send(value);
+            console.log(value);
+            return value;
+        })
+    }
+
+    function handleEditorCommunication(messageType: string, messageContent: string) {
+        setEditorMode((editorMode) => {
+            if (!editorMode) {
+                return editorMode
+            }
+
+            if (messageType === "Message") {
+                setMarkdown(messageContent);
+            } else if (messageType === "NewConnection") {
+                console.log("編集中のmarkdownを送信")
+                sendMarkdwonToOthers();
+            } else if (messageType === "Connections") {
+                console.log("接続者数:" + messageContent)
+            }
+            return editorMode
+        })
+    }
 
     const reloadRoot = useCallback(() => {
         window.location.href = "/";
     }, []);
 
-    const reloadPage = useCallback(() => {
-        window.location.reload();
-    }, []);
+    // const reloadPage = useCallback(() => {
+    //     window.location.reload();
+    // }, []);
 
     function handleSubmit(title: string, markdown: string) {
         const post = { title, markdown };
-        axios.post("http://localhost:8080/page/" + title, post)
+        axios.post(`http://localhost:8080/page/${title}`, post)
             .then(response => {
                 console.log('記事保存:', response.data);
             })
             .catch(error => {
                 console.error('記事保存エラー:', error);
             });
-    };
+    }
 
     function handleLoad(title: string) {
         if(title !== "") {
@@ -70,13 +97,16 @@ function PageView()  {
     }
 
     function handleDelete() {
-        if(confirm("ページを削除しますか？")) {
+        if(urlParams.title === "") {
+            alert("title undefined");
+        } else if(confirm("ページを削除しますか？")) {
             axios.delete("http://localhost:8080/page/" + urlParams.title)
                 .then(response => {
                     console.log('記事削除:', response.data);
                     reloadRoot();
                 })
                 .catch(error => {
+                    alert("記事削除エラー");
                     console.error('記事削除エラー:', error);
                 })
         }
@@ -94,10 +124,9 @@ function PageView()  {
                    className="editor"
                    value={markdown}
                    onChange={(e) => {
-                       const newValue = e.target.value;
-                       setMarkdown(newValue);
-                       socketRef.current?.send(newValue);
-                       console.log(newValue);
+                       const newMarkdown = e.target.value;
+                       setMarkdown(newMarkdown);
+                       sendMarkdwonToOthers(newMarkdown)
                    }}
                    placeholder="Enter text here"
                />
@@ -130,7 +159,6 @@ function PageView()  {
                         onClick={() => {
                             if(editorMode) {
                                 handleSubmit(urlParams.title|| "", markdown)
-                                reloadPage();
                             }
                             setEditorMode(!editorMode)
                         }}
