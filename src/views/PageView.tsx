@@ -14,7 +14,7 @@ function PageView()  {
     const socketRef = useRef<WebSocket | null>(null);
 
     React.useEffect(() => {
-        const websocket = new WebSocket(`ws://localhost:8080/ws/${urlParams.title}`);
+        const websocket = new WebSocket(`ws://w1ki-demo-backend-739333860791.asia-northeast2.run.app/ws/${urlParams.title}`);
         socketRef.current = websocket;
         const onMessage = (event: MessageEvent<string>) => {
             const messageType = event.data.split(":")[0];
@@ -70,7 +70,7 @@ function PageView()  {
 
     function handleSubmit(title: string, markdown: string) {
         const post = { title, markdown };
-        axios.post(`http://localhost:8080/page/${title}`, post)
+        axios.post(`https://w1ki-demo-backend-739333860791.asia-northeast2.run.app/page/${title}`, post)
             .then(response => {
                 console.log('記事保存:', response.data);
             })
@@ -81,7 +81,7 @@ function PageView()  {
 
     function handleLoad(title: string) {
         if(title !== "") {
-            axios.get("http://localhost:8080/page/" + title)
+            axios.get(`https://w1ki-demo-backend-739333860791.asia-northeast2.run.app/page/${title}`)
                 .then(response => {
                     console.log('記事読み込み:', response.data);
                     if(response.data) {
@@ -100,7 +100,7 @@ function PageView()  {
         if(urlParams.title === "") {
             alert("title undefined");
         } else if(confirm("ページを削除しますか？")) {
-            axios.delete("http://localhost:8080/page/" + urlParams.title)
+            axios.delete(`https://w1ki-demo-backend-739333860791.asia-northeast2.run.app/page/${urlParams.title}`)
                 .then(response => {
                     console.log('記事削除:', response.data);
                     reloadRoot();
@@ -113,25 +113,25 @@ function PageView()  {
     }
 
     function editorView() {
-       return  (
-           <div className="editor-container">
-               <div className="preview">
-                   <Markdown remarkPlugins={[remarkGfm]}>
-                       {markdown}
-                   </Markdown>
-               </div>
-               <textarea
-                   className="editor"
-                   value={markdown}
-                   onChange={(e) => {
-                       const newMarkdown = e.target.value;
-                       setMarkdown(newMarkdown);
-                       sendMarkdwonToOthers(newMarkdown)
-                   }}
-                   placeholder="Enter text here"
-               />
-           </div>
-       )
+        return  (
+            <div className="editor-container">
+                <div className="preview">
+                    <Markdown remarkPlugins={[remarkGfm]}>
+                        {markdown}
+                    </Markdown>
+                </div>
+                <textarea
+                    className="editor"
+                    value={markdown}
+                    onChange={(e) => {
+                        const newMarkdown = e.target.value;
+                        setMarkdown(newMarkdown);
+                        sendMarkdwonToOthers(newMarkdown)
+                    }}
+                    placeholder="Enter text here"
+                />
+            </div>
+        )
     }
 
     function articleView() {

@@ -18,23 +18,11 @@ function PageView()  {
         setTitle(urlParams.title || "");
         handleLoad(urlParams.title || "");
 
-        // const websocket = new WebSocket("ws://localhost:8080/ws");
-        // socketRef.current = websocket;
-        //
-        // const onMessage = (event: MessageEvent<string>) => {
-        //     setMarkdown(event.data)
-        // }
-        // websocket.addEventListener('message', onMessage);
-        //
-        // return () => {
-        //     websocket.close()
-        //     websocket.removeEventListener('message', onMessage);
-        // }
     }, [urlParams.title])
 
     const createNewArticle = (title: string, markdown: string) => {
         const post = { title, markdown };
-        axios.post("http://localhost:8080/page/" + title, post)
+        axios.post(`https://w1ki-demo-backend-739333860791.asia-northeast2.run.app/page/${title}`, post)
             .then(response => {
                 console.log('記事作成:', response.data);
                 window.location.href = `/view/${title}`;
@@ -50,7 +38,7 @@ function PageView()  {
             alert("タイトルを入力してください。");
             return;
         }
-        axios.get("http://localhost:8080/page/" + title)
+        axios.get(`https://w1ki-demo-backend-739333860791.asia-northeast2.run.app/page/${title}`)
             .then(response => {
                 console.log('記事確認:', response.data);
                 if(response.data == "" || confirm("既に同じタイトルの記事があります。上書きしますか？")) {
@@ -65,7 +53,7 @@ function PageView()  {
 
     const handleLoad = (title: string) => {
         if(title !== "") {
-            axios.get("http://localhost:8080/page/" + title)
+            axios.get(`https://w1ki-demo-backend-739333860791.asia-northeast2.run.app/page/${title}`)
                 .then(response => {
                     console.log('記事読み込み:', response.data);
                     setMarkdown(response.data);
@@ -77,38 +65,26 @@ function PageView()  {
     }
 
     function editorView() {
-       return (
-           <div className="editor-container">
-               <div className="preview">
-                   <Markdown remarkPlugins={[remarkGfm]}>
-                       {markdown}
-                   </Markdown>
-               </div>
-               <textarea
-                   className="editor"
-                   value={markdown}
-                   onChange={(e) => {
-                       const newValue = e.target.value;
-                       setMarkdown(newValue);
-                       socketRef.current?.send(newValue);
-                   }}
-                   placeholder="Enter text here"
-               />
-           </div>
-       )
+        return (
+            <div className="editor-container">
+                <div className="preview">
+                    <Markdown remarkPlugins={[remarkGfm]}>
+                        {markdown}
+                    </Markdown>
+                </div>
+                <textarea
+                    className="editor"
+                    value={markdown}
+                    onChange={(e) => {
+                        const newValue = e.target.value;
+                        setMarkdown(newValue);
+                        socketRef.current?.send(newValue);
+                    }}
+                    placeholder="Enter text here"
+                />
+            </div>
+        )
     }
-
-    // function articleView() {
-    //     return (
-    //         <>
-    //             <p className="article">
-    //                 <Markdown remarkPlugins={[remarkGfm]}>
-    //                     {markdown}
-    //                 </Markdown>
-    //             </p>
-    //         </>
-    //     )
-    // }
 
 
     return (

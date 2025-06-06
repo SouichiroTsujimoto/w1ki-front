@@ -7,7 +7,7 @@ function Top() {
     const [pages, setPages] = useState<string[]>([]);
 
     useEffect(() => {
-        axios.get("http://localhost:8080/")
+        axios.get(`https://w1ki-demo-backend-739333860791.asia-northeast2.run.app/`)
             .then(response => {
                 console.log('ページ一覧:', response.data);
                 setPages(response.data);
