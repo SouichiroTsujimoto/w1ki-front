@@ -14,7 +14,7 @@ function PageView()  {
     const socketRef = useRef<WebSocket | null>(null);
 
     React.useEffect(() => {
-        const websocket = new WebSocket(`ws://w1ki-demo-backend-739333860791.asia-northeast2.run.app/ws/${urlParams.title}`);
+        const websocket = new WebSocket(`wss://w1ki-demo-backend-739333860791.asia-northeast2.run.app/ws/${urlParams.title}`);
         socketRef.current = websocket;
         const onMessage = (event: MessageEvent<string>) => {
             const messageType = event.data.split(":")[0];
