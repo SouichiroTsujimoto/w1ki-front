@@ -1,13 +1,14 @@
 import {useEffect, useState} from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { getApiUrl } from '../config/api';
 import './Sidebar.css';
 
 function Sidebar() {
     const [pages, setPages] = useState<string[]>([]);
+    const location = useLocation();
 
-    useEffect(() => {
+    const fetchPages = () => {
         axios.get(getApiUrl('/'))
             .then(response => {
                 console.log('ページ一覧:', response.data);
@@ -16,7 +17,11 @@ function Sidebar() {
             .catch(error => {
                 console.error('ページ一覧エラー:', error);
             })
-    }, [])
+    };
+
+    useEffect(() => {
+        fetchPages();
+    }, [location.pathname]); // ルートが変更されるたびに実行
 
     return (
         <div className="sidebar">
