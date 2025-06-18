@@ -1,13 +1,14 @@
 import {useEffect, useState} from 'react'
 import { Link } from 'react-router-dom'
 import axios from 'axios';
+import { getApiUrl } from '../config/api';
 import './Top.css';
 
 function Top() {
     const [pages, setPages] = useState<string[]>([]);
 
     useEffect(() => {
-        axios.get(`https://w1ki-demo-backend-739333860791.asia-northeast2.run.app/`)
+        axios.get(getApiUrl('/'))
             .then(response => {
                 console.log('ページ一覧:', response.data);
                 setPages(response.data);

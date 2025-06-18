@@ -1,13 +1,15 @@
 import React from 'react'
 import { useState, useRef } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import axios from 'axios';
+import { getApiUrl } from '../config/api';
 import './NewPage.css'
 
 function PageView()  {
     const urlParams = useParams<{ title: string }>()
+    const navigate = useNavigate()
     const [title, setTitle] = useState<string>("");
     const [markdown, setMarkdown] = useState<string>("");
     // const [editorMode, setEditorMode] = useState<boolean>(false);
@@ -22,23 +24,23 @@ function PageView()  {
 
     const createNewArticle = (title: string, markdown: string) => {
         const post = { title, markdown };
-        axios.post(`https://w1ki-demo-backend-739333860791.asia-northeast2.run.app/page/${title}`, post)
+        axios.post(getApiUrl(`/page/${title}`), post)
             .then(response => {
                 console.log('記事作成:', response.data);
-                window.location.href = `/view/${title}`;
+                // 記事作成成功後、該当記事のページビューにリダイレクト
+                navigate(`/view/${encodeURIComponent(title)}`);
             })
             .catch(error => {
                 console.error('記事作成エラー:', error);
                 alert("記事作成に失敗しました。");
             });
-
     }
     const handleSubmit = (title: string, markdown: string) => {
         if(title === "") {
             alert("タイトルを入力してください。");
             return;
         }
-        axios.get(`https://w1ki-demo-backend-739333860791.asia-northeast2.run.app/page/${title}`)
+        axios.get(getApiUrl(`/page/${title}`))
             .then(response => {
                 console.log('記事確認:', response.data);
                 if(response.data == "" || confirm("既に同じタイトルの記事があります。上書きしますか？")) {
@@ -53,7 +55,7 @@ function PageView()  {
 
     const handleLoad = (title: string) => {
         if(title !== "") {
-            axios.get(`https://w1ki-demo-backend-739333860791.asia-northeast2.run.app/page/${title}`)
+            axios.get(getApiUrl(`/page/${title}`))
                 .then(response => {
                     console.log('記事読み込み:', response.data);
                     setMarkdown(response.data);

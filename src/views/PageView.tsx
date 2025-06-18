@@ -1,9 +1,10 @@
 import React from 'react'
 import { useState, useRef, useCallback } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import axios from 'axios';
+import { getApiUrl, getWsUrl } from '../config/api';
 import './PageView.css'
 import './editorStyles.css'
 
@@ -12,9 +13,10 @@ function PageView()  {
     const [markdown, setMarkdown] = useState<string>("");
     const [editorMode, setEditorMode] = useState<boolean>(false);
     const socketRef = useRef<WebSocket | null>(null);
+    const navigate = useNavigate();
 
     React.useEffect(() => {
-        const websocket = new WebSocket(`wss://w1ki-demo-backend-739333860791.asia-northeast2.run.app/ws/${urlParams.title}`);
+        const websocket = new WebSocket(getWsUrl(`/ws/${urlParams.title}`));
         socketRef.current = websocket;
         const onMessage = (event: MessageEvent<string>) => {
             const messageType = event.data.split(":")[0];
@@ -61,16 +63,12 @@ function PageView()  {
     }
 
     const reloadRoot = useCallback(() => {
-        window.location.href = "/";
+        navigate("/");
     }, []);
-
-    // const reloadPage = useCallback(() => {
-    //     window.location.reload();
-    // }, []);
 
     function handleSubmit(title: string, markdown: string) {
         const post = { title, markdown };
-        axios.post(`https://w1ki-demo-backend-739333860791.asia-northeast2.run.app/page/${title}`, post)
+        axios.post(getApiUrl(`/page/${title}`), post)
             .then(response => {
                 console.log('記事保存:', response.data);
             })
@@ -81,7 +79,7 @@ function PageView()  {
 
     function handleLoad(title: string) {
         if(title !== "") {
-            axios.get(`https://w1ki-demo-backend-739333860791.asia-northeast2.run.app/page/${title}`)
+            axios.get(getApiUrl(`/page/${title}`))
                 .then(response => {
                     console.log('記事読み込み:', response.data);
                     if(response.data) {
@@ -100,7 +98,7 @@ function PageView()  {
         if(urlParams.title === "") {
             alert("title undefined");
         } else if(confirm("ページを削除しますか？")) {
-            axios.delete(`https://w1ki-demo-backend-739333860791.asia-northeast2.run.app/page/${urlParams.title}`)
+            axios.delete(getApiUrl(`/page/${urlParams.title}`))
                 .then(response => {
                     console.log('記事削除:', response.data);
                     reloadRoot();
